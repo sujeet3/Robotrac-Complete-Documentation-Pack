@@ -1,4 +1,39 @@
+# IDE Command Logs & Scratch
 .agent_terminal_commands.log
+scratch/
+
+# Cloudflare Wrangler & Build Cache
+.wrangler/
+
+# Python Virtual Environments & Bytecode
 .venv/
+venv/
+env/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Node & Package Managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+
+# OS & Editor Artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
