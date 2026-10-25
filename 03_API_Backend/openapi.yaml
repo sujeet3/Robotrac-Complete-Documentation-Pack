@@ -1,0 +1,108 @@
+openapi: 3.1.0
+info:
+  title: Robotrac API
+  version: 0.1.0
+  description: Draft API contract for research and simulation. Not a certified vehicle-control interface.
+servers:
+  - url: https://api.example.invalid
+security:
+  - bearerAuth: []
+paths:
+  /api/v1/devices:
+    get:
+      summary: List devices visible to the current user
+      responses:
+        "200":
+          description: Device list
+  /api/v1/devices/{device_id}/health:
+    get:
+      summary: Get device health and freshness
+      parameters:
+        - in: path
+          name: device_id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Health summary
+  /api/v1/devices/{device_id}/telemetry/latest:
+    get:
+      summary: Get latest telemetry snapshot
+      parameters:
+        - in: path
+          name: device_id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Latest telemetry
+  /api/v1/missions:
+    get:
+      summary: List missions
+      responses:
+        "200":
+          description: Mission list
+    post:
+      summary: Create a mission draft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, field_boundary]
+              properties:
+                name: { type: string }
+                field_boundary: { type: object }
+      responses:
+        "201":
+          description: Draft created
+  /api/v1/missions/{mission_id}/validate:
+    post:
+      summary: Validate mission draft; does not initiate motion
+      parameters:
+        - in: path
+          name: mission_id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Validation results
+  /api/v1/devices/{device_id}/commands:
+    post:
+      summary: Submit high-level command request; onboard validation required
+      parameters:
+        - in: path
+          name: device_id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [command_id, action, expires_at_utc, idempotency_key]
+              properties:
+                command_id: { type: string }
+                action:
+                  type: string
+                  enum: [PAUSE_MISSION, CANCEL_MISSION, REQUEST_MISSION_START, REQUEST_SAFE_STOP]
+                expires_at_utc: { type: string, format: date-time }
+                idempotency_key: { type: string }
+                parameters: { type: object }
+      responses:
+        "202":
+          description: Request accepted for processing, not proof of physical execution
+        "400":
+          description: Invalid request
+        "403":
+          description: Not authorized
+        "409":
+          description: Duplicate or conflicting request
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

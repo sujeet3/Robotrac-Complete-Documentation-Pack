@@ -1,0 +1,4 @@
+.agent_terminal_commands.log
+.venv/
+__pycache__/
+*.pyc

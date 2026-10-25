@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robotrac — Executive Technical Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #0B1118;
+    --card-bg: #131E29;
+    --card-border: #1F3042;
+    --text-main: #F3F6F8;
+    --text-muted: #94A3B8;
+    --accent-teal: #10B981;
+    --accent-cyan: #06B6D4;
+    --accent-amber: #F59E0B;
+    --accent-red: #EF4444;
+    --accent-blue: #3B82F6;
+    --badge-bg: rgba(16, 185, 129, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Presentation Container */
+  .presentation-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  /* Slide Shell */
+  .slide {
+    position: absolute;
+    width: 90%;
+    max-width: 1400px;
+    height: 85%;
+    max-height: 840px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 3rem;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transform: scale(0.97) translateY(20px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .slide.active {
+    display: flex;
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    z-index: 10;
+  }
+
+  /* Slide Header */
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .slide-header-left h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-cyan);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+
+  .slide-header-left h1 {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+  }
+
+  .slide-badge {
+    padding: 0.4rem 0.9rem;
+    background: var(--badge-bg);
+    color: var(--accent-teal);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Slide Body & Layouts */
+  .slide-body {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    height: 100%;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: rgba(11, 17, 24, 0.6);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-teal);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card ul {
+    list-style: none;
+  }
+
+  .card li {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    position: relative;
+    padding-left: 1.4rem;
+  }
+
+  .card li strong {
+    color: var(--text-main);
+  }
+
+  .card li::before {
+    content: "•";
+    color: var(--accent-cyan);
+    font-size: 1.3rem;
+    position: absolute;
+    left: 0.2rem;
+    top: -0.1rem;
+  }
+
+  /* Code / Diagram blocks */
+  .diagram-box {
+    background: #070B0F;
+    border: 1px solid #1A2836;
+    border-radius: 10px;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: #38BDF8;
+    overflow-x: auto;
+    white-space: pre;
+    margin-top: 0.75rem;
+  }
+
+  /* Highlight Stat Box */
+  .stat-banner {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-item {
+    flex: 1;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-teal);
+    font-weight: 600;
+  }
+
+  /* Title Slide Specifics */
+  .title-slide {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4rem;
+  }
+
+  .title-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1.2rem;
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.35);
+    border-radius: 9999px;
+    color: var(--accent-cyan);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+  }
+
+  .title-headline {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .title-subline {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    max-width: 820px;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+  }
+
+  .title-meta {
+    display: flex;
+    gap: 3rem;
+    border-top: 1px solid var(--card-border);
+    padding-top: 1.5rem;
+  }
+
+  .meta-col {
+    text-align: left;
+  }
+
+  .meta-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .meta-val {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  /* Navigation Bar */
+  .nav-bar {
+    height: 70px;
+    background: #090E14;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3rem;
+    z-index: 50;
+  }
+
+  .nav-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    background: #1E293B;
+    border: 1px solid #334155;
+    color: #FFFFFF;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.2s, border 0.2s;
+  }
+
+  .btn:hover {
+    background: #334155;
+    border-color: #475569;
+  }
+
+  .btn-primary {
+    background: var(--accent-teal);
+    border-color: var(--accent-teal);
+    color: #06281E;
+  }
+
+  .btn-primary:hover {
+    background: #059669;
+    border-color: #059669;
+  }
+
+  .slide-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--accent-cyan);
+  }
+</style>
+</head>
+<body>
+
+<div class="presentation-container">
+
+  <!-- SLIDE 1: Title Slide -->
+  <div class="slide active title-slide" id="slide-1">
+    <div class="title-logo">🚜 ROBOTRAC R&D ENGINEERING</div>
+    <h1 class="title-headline">Autonomous Agricultural Tractor Platform</h1>
+    <p class="title-subline">Technical Architecture, Drive-by-Wire Electro-Hydraulics, Dual-Domain Compute, Non-Linear Motion Control & ISO 18497 / ISO 25119 Safety Compliance</p>
+    <div class="title-meta">
+      <div class="meta-col">
+        <div class="meta-title">Presenter</div>
+        <div class="meta-val">Chief Technology Officer & AI Robotics Engineer</div>
+      </div>
+      <div class="meta-col">
+        <div class="meta-title">Specification</div>
+        <div class="meta-val">Production Engineering Baseline v1.0</div>
+      </div>
+      <div class="meta-col">
+        <div class="meta-title">Date</div>
+        <div class="meta-val">October 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Problem & Operational Reality -->
+  <div class="slide" id="slide-2">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 01 · Agronomic Context</h3>
+        <h1>The Agricultural Robotics Problem</h1>
+      </div>
+      <span class="slide-badge">Operational Challenges</span>
+    </div>
+    <div class="slide-body">
+      <div class="stat-banner">
+        <div class="stat-item">
+          <div class="stat-value">15% – 35%</div>
+          <div class="stat-label">Dynamic Tire-Soil Wheel Slip</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100,000 Lux</div>
+          <div class="stat-label">Direct Open Sunlight Glare</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">±2.5 cm</div>
+          <div class="stat-label">Pass-to-Pass Accuracy Target</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">⚠️ Why Passenger AV Stacks Fail in Agriculture</div>
+          <ul>
+            <li><strong>Terramechanics &amp; Non-Zero Slip:</strong> Deformable tilled soil invalidates bicycle kinematic assumptions. Lateral slip (v<sub>y</sub> ≠ 0) causes steady-state downhill drift into crop rows.</li>
+            <li><strong>Severe Environmental Blinding:</strong> Airborne soil dust and crop chaff blind optical cameras and LiDAR lenses within 20 minutes without active cleaning.</li>
+            <li><strong>High-Mast Antenna Roll:</strong> Antenna mounted at 2.8 m height introduces up to 29.2 cm lateral error on a 6° furrow tilt if uncompensated.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🎯 Robotrac Engineering Objectives</div>
+          <ul>
+            <li><strong>Dual-Domain Compute:</strong> Hard Real-Time safety MCU for 100 Hz hydraulic steering, decoupled from Linux/Perception.</li>
+            <li><strong>Sub-Scale Mule Validation:</strong> Eliminate sim-to-real hazard via an electric drive-by-wire mule before full-size diesel deployment.</li>
+            <li><strong>Zero-Cloud Autonomous Independence:</strong> 100% of steering, obstacle stopping, and swath following executed onboard.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Dual-Domain System Architecture -->
+  <div class="slide" id="slide-3">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 02 · System Architecture</h3>
+        <h1>Dual-Domain Compute &amp; Hardware Split</h1>
+      </div>
+      <span class="slide-badge">ADR-002 Approved</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🖥️ Domain 1: Soft Real-Time (NVIDIA Jetson)</div>
+          <ul>
+            <li><strong>Hardware:</strong> NVIDIA Jetson AGX Orin Industrial (275 TOPS).</li>
+            <li><strong>OS &amp; Middleware:</strong> Ubuntu Linux (PREEMPT_RT) + ROS 2 (CycloneDDS).</li>
+            <li><strong>Perception:</strong> Optical NIR semantic segmentation (BiSeNet-V2 @ 30 FPS) + 77 GHz radar Doppler clutter filter.</li>
+            <li><strong>State Estimation:</strong> 15-state Error-State EKF (ES-EKF) fusing dual RTK + tactical IMU @ 20 Hz.</li>
+            <li><strong>Global Planning:</strong> Fields2Cover coverage swaths &amp; Ω-turns.</li>
+            <li><strong>Local Trajectory:</strong> NMPC solver (acados @ 20 Hz).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🛡️ Domain 2: Hard Real-Time (Safety Controller)</div>
+          <ul>
+            <li><strong>Hardware:</strong> TTControl TTC 580 / IFM CR711S (Dual-core lockstep MCU).</li>
+            <li><strong>Execution Loop:</strong> Guaranteed deterministic 100 Hz cycle (10.0 ms ± 0.1 ms jitter).</li>
+            <li><strong>Steering:</strong> Dual Hall Wheel Angle Sensor (WAS) reading + Danfoss OSPE valve PWM control.</li>
+            <li><strong>Failsafe Stopping:</strong> Spring-Applied Pressure-Released (SAPR) brake dump valve (&lt; 150 ms).</li>
+            <li><strong>Powertrain &amp; Implement:</strong> SAE J1939 throttle (<code>TSC1</code>) + ISOBUS 3-point hitch lift at headlands.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="diagram-box">
+Jetson Orin (Perception / NMPC) ──[ CAN 1: Kinematic Setpoints ]──► Safety Controller (100 Hz) ──► OSPE Valve &amp; SAPR Brakes
+                                                                           ▲
+                                                         Wireless RF Remote (150 ms Ping)
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Drive-by-Wire & Electro-Hydraulic Actuation -->
+  <div class="slide" id="slide-4">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 03 · Vehicle Control &amp; DbW</h3>
+        <h1>Electro-Hydraulic Actuation Subsystems</h1>
+      </div>
+      <span class="slide-badge">ISO 25119 AgPL d</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Steering Actuation</div>
+          <ul>
+            <li><strong>Valve:</strong> Danfoss OSPE / Eaton PVG 32 proportional valve.</li>
+            <li><strong>No Backlash:</strong> Direct cylinder hydraulic porting.</li>
+            <li><strong>Sensor:</strong> Curtiss-Wright R300 dual Hall-effect WAS (IP69K).</li>
+            <li><strong>Plausibility:</strong> Inverted V<sub>1</sub> + V<sub>2</sub> = 5.0V ± 0.1V cross-check.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Fail-Safe Braking</div>
+          <ul>
+            <li><strong>Service Brake:</strong> Proportional electro-hydraulic valve (0–120 bar).</li>
+            <li><strong>Emergency Brake:</strong> Spring-Applied Pressure-Released (SAPR).</li>
+            <li><strong>Dump Valve:</strong> De-energizes on E-stop, venting fluid in &lt; 150 ms.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Powertrain &amp; Implement</div>
+          <ul>
+            <li><strong>J1939 Engine Control:</strong> Broadcasts <code>TSC1</code> torque and RPM limits.</li>
+            <li><strong>ISOBUS Class 3 (TIM):</strong> Automates 3-point hitch lift/lower at headlands.</li>
+            <li><strong>PTO Interlock:</strong> Auto-disengages PTO before tight Ω-turns.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: High-Precision Navigation & State Estimation -->
+  <div class="slide" id="slide-5">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 04 · State Estimation</h3>
+        <h1>Dual-Antenna RTK &amp; 3D Tilt Compensation</h1>
+      </div>
+      <span class="slide-badge">Sub-2.5 cm Accuracy</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📡 Moving Baseline Dual-Antenna RTK</div>
+          <ul>
+            <li><strong>Static Heading:</strong> Dual antennas on a ≥ 1.2 m baseline across cab roof.</li>
+            <li><strong>Zero-Speed Accuracy:</strong> Calculates carrier-phase double-differences, yielding true static heading (σ<sub>ψ</sub> &lt; 0.09°) even at 0 m/s forward velocity.</li>
+            <li><strong>Immunity:</strong> Completely unaffected by tractor steel chassis magnetic disturbances or wheel spin in mud.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">📐 Dynamic Terrain Roll / Pitch Compensation</div>
+          <ul>
+            <li><strong>Tactical IMU:</strong> Xsens MTi-680G (&lt; 2°/hr bias stability) executing at 200 Hz.</li>
+            <li><strong>Lever-Arm Correction:</strong> Dynamic coordinate transformation down to ground contact patch:
+              <br><code>Δx = h · sin(θ_roll) + l · cos(θ_pitch)</code>
+            </li>
+            <li><strong>Ground Truth:</strong> Limits ground lateral tilt error to ≤ 2.0 cm over severe ruts and furrows.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Multi-Modal Perception in Hostile Environments -->
+  <div class="slide" id="slide-6">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 05 · Environmental Perception</h3>
+        <h1>Multi-Modal Sensor Fusion &amp; Dust Penetration</h1>
+      </div>
+      <span class="slide-badge">Zero False Stops</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">NIR HDR Cameras</div>
+          <ul>
+            <li><strong>Sensor:</strong> Leopard Imaging AR0820 GMSL2 (&gt; 120 dB HDR, Global Shutter).</li>
+            <li><strong>NIR 850 nm Filter:</strong> Maximizes crop chlorophyll reflectance against soil.</li>
+            <li><strong>Pneumatic Air-Blast:</strong> 6-bar compressed air purge nozzle cleans dust every 5 min.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">77 GHz mmWave Radar</div>
+          <ul>
+            <li><strong>Model:</strong> Continental ARS 408-21.</li>
+            <li><strong>Dust Penetration:</strong> Millimeter waves (λ ≈ 3.9 mm) pierce dense dust clouds.</li>
+            <li><strong>Doppler Velocity:</strong> Directly measures radial speed of approaching humans/obstacles.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">3D Solid-State LiDAR</div>
+          <ul>
+            <li><strong>Model:</strong> Livox Mid-360 (360° x 59° FOV).</li>
+            <li><strong>Canopy Profiling:</strong> 3D field boundary, ditch, and canopy density extraction.</li>
+            <li><strong>Clutter Removal:</strong> Ground plane segmentation filters out harmless tall grass.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: AI/ML Crop-Row Segmentation -->
+  <div class="slide" id="slide-7">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 06 · Computer Vision</h3>
+        <h1>Crop-Row Perception &amp; Visual Servoing</h1>
+      </div>
+      <span class="slide-badge">Edge TensorRT INT8</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🧠 Deep Semantic Segmentation (BiSeNet-V2)</div>
+          <ul>
+            <li><strong>Multi-Class Prediction:</strong> Classifies pixels into: <code>[Soil, Crop Stalk, Weed Clutter, Obstacle]</code>.</li>
+            <li><strong>Weed Resilience:</strong> Replaces naive Excess Green (ExG) color thresholding which collapses under weed pressure.</li>
+            <li><strong>Inference Budget:</strong> Runs at 30 FPS (&lt; 33 ms latency) on Jetson AGX Orin TensorRT INT8.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🔄 Hybrid Navigation State Machine</div>
+          <ul>
+            <li><strong>Mode A (Headlands / Early Stage):</strong> Governed strictly by RTK-GNSS + IMU waypoint following where no crop rows exist.</li>
+            <li><strong>Mode B (Canopy Row-Following):</strong> Fuses visual-servoing row centerlines (e<sub>y</sub>, e<sub>ψ</sub>) with RTK to steer precisely down rows and prevent crop root damage.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Coverage Planning via Fields2Cover -->
+  <div class="slide" id="slide-8">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 07 · Coverage Path Planning</h3>
+        <h1>Fields2Cover Swaths &amp; Ω-Turns</h1>
+      </div>
+      <span class="slide-badge">Implement Footprint Aware</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🗺️ Agricultural Coverage Hierarchy</div>
+          <ul>
+            <li><strong>Headland Generator:</strong> Computes peripheral buffer zones based on tractor wheelbase and implement turning radius R<sub>min</sub>.</li>
+            <li><strong>Swath Generator:</strong> Computes optimal parallel swaths aligned with field contours to minimize soil compaction and overlap.</li>
+            <li><strong>Route Optimizer:</strong> Solves swath traversal order via Google OR-Tools to minimize non-working headland travel time.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🔄 Non-Holonomic Turn Trajectories</div>
+          <ul>
+            <li><strong>Ω-Turn (Omega Turn):</strong> Loops outside the swath when adjacent tracks are closer than 2 · R<sub>min</sub>.</li>
+            <li><strong>Dubins &amp; Reeds-Shepp:</strong> Generates kinematically feasible forward/reverse turning curves.</li>
+            <li><strong>Swept Collision Envelope:</strong> Simulates towed implement swing moments to avoid hitting fence posts and field ditches.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Non-Linear Model Predictive Control (NMPC) -->
+  <div class="slide" id="slide-9">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 08 · Advanced Motion Control</h3>
+        <h1>Non-Linear MPC with Soil-Slip Dynamics</h1>
+      </div>
+      <span class="slide-badge">acados RTI @ 20 Hz</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">⚡ The Control Formulation</div>
+          <ul>
+            <li><strong>Receding Horizon:</strong> Prediction horizon N = 20 steps (T<sub>s</sub> = 0.05 s, lookahead = 1.0 s).</li>
+            <li><strong>Soil-Tire Slip Dynamics:</strong> Incorporates Pacejka lateral tire-soil friction models (F<sub>yf</sub>, F<sub>yr</sub>) directly into state equations.</li>
+            <li><strong>Implement Drag Observer:</strong> Compensates for dynamic yaw perturbations caused by asymmetric tillage soil resistance.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🔒 Hard Actuation Constraints</div>
+          <ul>
+            <li><strong>Knuckle Angle Bounds:</strong> |δ<sub>steer</sub>| ≤ 35°</li>
+            <li><strong>Hydraulic Slew Rate:</strong> |δ̇<sub>steer</sub>| ≤ 25°/s</li>
+            <li><strong>Tip-Over Prevention:</strong> Lateral acceleration capped at |a<sub>y</sub>| ≤ 0.25 · g on side-slopes.</li>
+            <li><strong>Solve Latency:</strong> Real-Time Iterations (RTI) converge in ≤ 20 ms on Jetson Orin.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Functional Safety & ISO Standards -->
+  <div class="slide" id="slide-10">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 09 · Safety Architecture</h3>
+        <h1>ISO 18497 &amp; ISO 25119 Compliance</h1>
+      </div>
+      <span class="slide-badge">AgPL d / Category 3</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">ISO 18497 Zones</div>
+          <ul>
+            <li><strong>Zone 1 (Stop):</strong> Immediate Category 0 E-Stop and hydraulic dump (L<sub>stop</sub> ≈ 3.2 m).</li>
+            <li><strong>Zone 2 (Decel):</strong> Modulated service braking down to 0.3 m/s.</li>
+            <li><strong>Zone 3 (Warn):</strong> 360° amber strobe + 100 dB acoustic horn.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Wireless RF E-Stop</div>
+          <ul>
+            <li><strong>Remote:</strong> HBC-radiomatic / Hetronic Nova (PL d certified).</li>
+            <li><strong>RF Heartbeat:</strong> Deterministic 150 ms keep-alive token ping.</li>
+            <li><strong>Automatic Trip:</strong> Vehicle halts within &lt; 500 ms if RF is lost.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Pre-Motion Sequence</div>
+          <ul>
+            <li><strong>3-Second Horn:</strong> Sounds 100 dB horn for 3.0s before movement.</li>
+            <li><strong>Dual-Channel Relays:</strong> High-side and low-side cross-monitored switches.</li>
+            <li><strong>Mechanical Lock:</strong> Mechanical parking brake latches on fault.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Electrical Hardening & Power Supply -->
+  <div class="slide" id="slide-11">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 10 · Electrical Engineering</h3>
+        <h1>ISO 7637-2 Power &amp; Ingress Protection</h1>
+      </div>
+      <span class="slide-badge">IP67 / IP69K Rugged</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">⚡ Tractor Electrical Hostility Mitigation</div>
+          <ul>
+            <li><strong>Load Dump Protection (ISO 7637-2 Pulse 5a/5b):</strong> Active TVS clamping handles +100 V inductive spikes from alternator disconnections.</li>
+            <li><strong>Cold-Cranking Ride-Through:</strong> Accepts battery drops to 6.0 V during starter motor engagement.</li>
+            <li><strong>Supercapacitor Buffer:</strong> 50F bank provides a 30 s ride-through to bridge brownouts or allow graceful OS shutdown.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🛡️ Ingress &amp; Vibration Hardening</div>
+          <ul>
+            <li><strong>Enclosure:</strong> CNC milled aluminum enclosure with Gore-Tex pressure equalization vent (IP67 / IP69K washdown rated).</li>
+            <li><strong>Cabling:</strong> Sealed Deutsch DT/DTM &amp; Amphenol automotive connectors; M12 X-coded Ethernet.</li>
+            <li><strong>Vibration Testing:</strong> MIL-STD-810H rated against continuous diesel engine harmonic shudder.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Low-Bandwidth Telemetry & Edge Buffering -->
+  <div class="slide" id="slide-12">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 11 · Telecommunications</h3>
+        <h1>Protobuf, MQTT &amp; Store-and-Forward</h1>
+      </div>
+      <span class="slide-badge">85% Payload Reduction</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📦 Binary Protocol Buffers v3 over MQTT</div>
+          <ul>
+            <li><strong>Data Optimization:</strong> Compact binary Protobuf messages replace verbose JSON over WebSockets, consuming &lt; 50 MB per 10-hour working shift.</li>
+            <li><strong>QoS 1 Guarantee:</strong> MQTT broker ensures mission state transitions and critical alarms are acknowledged.</li>
+            <li><strong>TimescaleDB Hypertables:</strong> High-frequency telemetry partitioned into 7-day chunks in cloud database.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">💾 Edge Store-and-Forward Ring Buffer</div>
+          <ul>
+            <li><strong>Cellular Dead-Zone Resilience:</strong> Onboard SQLite ring buffer stores 72 hours of telemetry locally during connectivity blackouts.</li>
+            <li><strong>Throttled Sync:</strong> On cell reconnect, buffered data is uploaded in compressed chunks without overwhelming cellular bandwidth.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: Operator HMI & Android Field Tablet -->
+  <div class="slide" id="slide-13">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 12 · Human-Machine Interface</h3>
+        <h1>High-Contrast Outdoor Day Theme &amp; Local AP</h1>
+      </div>
+      <span class="slide-badge">100,000 Lux Field Readable</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">☀️ High-Contrast Outdoor Ergonomics</div>
+          <ul>
+            <li><strong>Pure White Canvas (#FFFFFF):</strong> Eliminates the dark-mode "mirror effect" under direct 100,000 lux open sunlight.</li>
+            <li><strong>Glove Touch Ergonomics:</strong> All actionable buttons and cards have &gt; 56 dp targets with 16 dp spacing.</li>
+            <li><strong>Slide-to-Start Gesture:</strong> Horizontal slider prevents accidental mission initiation.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">📡 Direct Wi-Fi AP &amp; Acoustic Alarms</div>
+          <ul>
+            <li><strong>Zero-Cloud Local Wi-Fi AP:</strong> Tablet connects directly to tractor's onboard Wi-Fi hotspot via QR code mTLS handshake.</li>
+            <li><strong>Acoustic Alarm Siren:</strong> Bypasses tablet silent mode with a continuous 2.5 kHz siren and haptic bursts on stop.</li>
+            <li><strong>Physical Horn Trigger:</strong> Commands the tractor's 100 dB horn on safety zone breaches.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Phased R&D Roadmap & Validation Gates -->
+  <div class="slide" id="slide-14">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 13 · Execution Strategy</h3>
+        <h1>Phased Development &amp; Release Gates</h1>
+      </div>
+      <span class="slide-badge">Rigorous De-risking</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Phase 1 &amp; 2: SIL &amp; UI</div>
+          <ul>
+            <li>Gazebo simulation with terramechanics soil slip.</li>
+            <li>Protobuf telemetry &amp; Android high-contrast UI.</li>
+            <li>Simulated fault injection.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Phase 3.5: Electric Mule</div>
+          <ul>
+            <li>Drive-by-wire electric UTV testbed.</li>
+            <li>Validates dual RTK, Fields2Cover swaths &amp; wireless E-stop at &lt; 5 km/h.</li>
+            <li>Zero rollover / crush risk.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Phase 4 &amp; 5: Tractor HIL</div>
+          <ul>
+            <li>Jacked-up tractor HIL hydraulic calibration.</li>
+            <li>50 hours of supervised autonomous closed-field proving trials.</li>
+            <li>ISO 18497 conformity sign-off.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: Executive Summary & Next Actions -->
+  <div class="slide" id="slide-15">
+    <div class="slide-header">
+      <div class="slide-header-left">
+        <h3>Section 14 · Executive Summary</h3>
+        <h1>Conclusion &amp; Procurement Milestones</h1>
+      </div>
+      <span class="slide-badge">Action Plan</span>
+    </div>
+    <div class="slide-body">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📋 Summary of Technical Advancements</div>
+          <ul>
+            <li><strong>Drive-by-Wire:</strong> Transitioned from unverified aftermarket kits to certified electro-hydraulic Danfoss OSPE valves and SAPR failsafe brakes.</li>
+            <li><strong>High-Precision Control:</strong> Upgraded from kinematic Stanley to NMPC with soil slip dynamics (pass-to-pass accuracy ≤ 2.5 cm).</li>
+            <li><strong>Functional Safety:</strong> Implemented dual-channel ISO 25119 AgPL d safety controller and ISO 18497 wireless E-stop heartbeat.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">🚀 Immediate Next Engineering Steps</div>
+          <ul>
+            <li><strong>Milestone 1:</strong> Confirm tractor hydraulic platform (CCLS load sensing) and order Danfoss OSPE valve manifold.</li>
+            <li><strong>Milestone 2:</strong> Assemble Phase 3.5 Sub-Scale Electric Mule to validate Fields2Cover and dual RTK in physical field trials.</li>
+            <li><strong>Milestone 3:</strong> Bench-test power conditioning module against ISO 7637-2 load dump transients before powering Jetson AGX Orin.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation Controls -->
+<div class="nav-bar">
+  <div class="nav-info">
+    <span class="slide-counter" id="counter">01 / 15</span>
+    <span id="slide-title-preview">Autonomous Agricultural Tractor Platform</span>
+  </div>
+  <div class="nav-controls">
+    <button class="btn" id="prev-btn" onclick="prevSlide()">◀ Previous</button>
+    <button class="btn btn-primary" id="next-btn" onclick="nextSlide()">Next ▶</button>
+    <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    <button class="btn" onclick="window.print()">🖨️ Print / Export PDF</button>
+  </div>
+</div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 15;
+
+  const titles = [
+    "Autonomous Agricultural Tractor Platform",
+    "The Agricultural Robotics Problem",
+    "Dual-Domain Compute & Hardware Split",
+    "Electro-Hydraulic Actuation Subsystems",
+    "Dual-Antenna RTK & 3D Tilt Compensation",
+    "Multi-Modal Sensor Fusion & Dust Penetration",
+    "Crop-Row Perception & Visual Servoing",
+    "Fields2Cover Swaths & Ω-Turns",
+    "Non-Linear MPC with Soil-Slip Dynamics",
+    "ISO 18497 & ISO 25119 Compliance",
+    "ISO 7637-2 Power & Ingress Protection",
+    "Protobuf, MQTT & Store-and-Forward",
+    "High-Contrast Outdoor Day Theme & Local AP",
+    "Phased Development & Release Gates",
+    "Conclusion & Procurement Milestones"
+  ];
+
+  function showSlide(index) {
+    if (index < 1) index = 1;
+    if (index > totalSlides) index = totalSlides;
+    currentSlide = index;
+
+    document.querySelectorAll('.slide').forEach((s, idx) => {
+      s.classList.remove('active');
+      if (idx + 1 === currentSlide) {
+        s.classList.add('active');
+      }
+    });
+
+    document.getElementById('counter').innerText = 
+      (currentSlide < 10 ? '0' : '') + currentSlide + ' / ' + totalSlides;
+    document.getElementById('slide-title-preview').innerText = titles[currentSlide - 1];
+
+    document.getElementById('prev-btn').disabled = (currentSlide === 1);
+    document.getElementById('next-btn').disabled = (currentSlide === totalSlides);
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides) {
+      showSlide(currentSlide + 1);
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlide > 1) {
+      showSlide(currentSlide - 1);
+    }
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      prevSlide();
+    } else if (e.key.toLowerCase() === 'f') {
+      toggleFullscreen();
+    }
+  });
+
+  showSlide(1);
+</script>
+</body>
+</html>
